@@ -16,7 +16,7 @@ public class Server {
     }
     
     public void init() throws IOException {
-        server_socket = new ServerSocket(9000, 10);
+        server_socket = new ServerSocket(9001, 10);
         ExecutorService svc =  Executors.newCachedThreadPool();
         System.out.println("Creating socket on port 9000");
         while(true) {
@@ -30,7 +30,7 @@ public class Server {
     public static class ClientHandler implements Runnable {
         private BufferedReader reader;
         public ClientHandler(Socket client_connection) {
-            try {
+            try {                
                 reader = new BufferedReader(new InputStreamReader(client_connection.getInputStream()));
             } catch (IOException e) {
                 // TODO Auto-generated catch block

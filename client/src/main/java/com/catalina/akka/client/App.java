@@ -1,21 +1,30 @@
 package com.catalina.akka.client;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Hello world!
  *
  */
 public class App {
-    public static void main(String[] args) throws UnknownHostException, IOException {
-        ExecutorService svc = Executors.newCachedThreadPool();
-        Socket client = new Socket("localhost", 9000);
-        PrintWriter out = new PrintWriter(client.getOutputStream(),true);
-        System.out.println("Got connected to server on 9000");
+    public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException {
+        List<Thread> threadList = new ArrayList<Thread>();
+        for(int i=0; i < 1; i++) {            
+            Socket client = new Socket("localhost", 9001);
+            Thread.sleep(100);
+            StoreSessionSimulator storeSessionSimulator = new StoreSessionSimulator(client);
+            System.out.println("Got connected to server on 9001");
+            Thread t = new Thread(storeSessionSimulator);
+            threadList.add(t);
+            t.start();
+        }
+        
+        for(Thread t : threadList) {
+            t.join();
+        }
     }
 }
