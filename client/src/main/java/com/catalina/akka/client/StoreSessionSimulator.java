@@ -52,7 +52,8 @@ public class StoreSessionSimulator implements Runnable {
             while(true) {
                 for(msg m : messages) {
                     Thread.sleep(25);
-                    out.write("hi");
+                    out.write(gson.toJson(m));
+                    out.newLine();
                     out.flush();
                 }
                 
