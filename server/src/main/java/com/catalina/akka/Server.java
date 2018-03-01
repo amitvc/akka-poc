@@ -8,9 +8,14 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.catalina.akka.models.msg;
+import com.catalina.akka.storage.SessionStorage;
+import com.google.gson.Gson;
+
 public class Server {
     
     private ServerSocket server_socket;
+    private SessionStorage sessionStorage;
     
     public Server() {
     }
@@ -23,15 +28,17 @@ public class Server {
             System.out.println("Waiting to accept incoming connections");
             Socket client_connection = server_socket.accept();
             System.out.println("got connection from "+ client_connection.getInetAddress().getHostAddress());
-            svc.submit(new Thread(new ClientHandler(client_connection)));
+            svc.submit(new Thread(new ClientHandler(client_connection, new SessionStorage())));
         }
     }
     
     public static class ClientHandler implements Runnable {
         private BufferedReader reader;
-        public ClientHandler(Socket client_connection) {
+        private SessionStorage sessionStorage;
+        public ClientHandler(Socket client_connection, SessionStorage s) {
             try {                
                 reader = new BufferedReader(new InputStreamReader(client_connection.getInputStream()));
+                this.sessionStorage = s;
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -39,10 +46,12 @@ public class Server {
         }
 
         public void run() {
+        	Gson gson = new Gson();
             while(true) {
                 try {
-                    String msg = reader.readLine();
-                    System.out.println(msg);
+                    String msg_str = reader.readLine();
+                    msg m = gson.fromJson(msg_str, msg.class);
+                    sessionStorage.handleMessage(m);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

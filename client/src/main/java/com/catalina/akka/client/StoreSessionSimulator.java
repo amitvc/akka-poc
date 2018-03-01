@@ -50,14 +50,15 @@ public class StoreSessionSimulator implements Runnable {
             BufferedWriter out = new BufferedWriter( new OutputStreamWriter(client.getOutputStream()));
             Gson gson = new Gson();
             while(true) {
-                for(msg m : messages) {
+            	for(msg m : messages) {
                     Thread.sleep(25);
                     out.write(gson.toJson(m));
                     out.newLine();
                     out.flush();
                 }
-                
+            	Thread.sleep(4000);
             }
+            
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
