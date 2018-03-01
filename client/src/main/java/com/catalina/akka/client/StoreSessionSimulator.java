@@ -17,7 +17,6 @@ import com.catalina.akka.models.sord;
 import com.catalina.akka.models.tot;
 import com.catalina.akka.models.upc;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 public class StoreSessionSimulator implements Runnable {
 
