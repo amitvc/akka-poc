@@ -1,6 +1,7 @@
 package com.catalina.akka;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
+import com.catalina.akka.models.msg;
+import com.catalina.akka.sessions.StoreSession;
 
 import akka.actor.AbstractActor;
 
@@ -9,13 +10,14 @@ public class StoreSessionTargetingActor extends AbstractActor  {
 
     @Override
     public void preStart() throws Exception {
-        System.out.println("Starting actor " + getSelf().toString());
     }
     
 	@Override
 	public Receive createReceive() {
-		return receiveBuilder().match(ConcurrentLinkedQueue.class, p -> {		    
-		    System.out.println("Actor--"+ getSelf().toString() + p + " executing targeting");
+		return receiveBuilder().match(StoreSession.class, p -> {		    
+		    StoreSession session = (StoreSession)p;
+		    msg m = (msg) session.pos.peek();
+		    System.out.println("Actor --"+ m._hdr.seq + " executing targeting call " + session.targetingCalls);
 		}).build();
 	}
 }

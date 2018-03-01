@@ -1,7 +1,5 @@
 package com.catalina.akka.sessions;
 
-import java.util.concurrent.ConcurrentLinkedQueue;
-
 import com.catalina.akka.StoreSessionTargetingActor;
 import com.catalina.akka.models.cust;
 import com.catalina.akka.models.msg;
@@ -13,18 +11,21 @@ import akka.actor.Props;
 
 public class StoreSessionActor extends AbstractActor{
 
-    private ConcurrentLinkedQueue<msg> pos = new ConcurrentLinkedQueue<msg>();
-
+    private StoreSession posSession = new StoreSession();
     
     @Override
     public Receive createReceive() {
         return receiveBuilder().match(msg.class, m -> {
-            System.out.println("Actor " + this.getSelf().toString() + "  pos size:" + pos.size());
-            pos.offer(m);
+            posSession.pos.offer(m);
+            if(!getSelf().toString().contains(m._hdr.seq)) {
+                System.out.println("Cant be possible");
+                System.exit(-666);
+            }
             if(m instanceof cust || m instanceof tot) {
-                System.out.println("Actor "+ getSelf().toString()+" requesting targeting -- pos size "+ pos.size());
+                System.out.println("Actor "+ this +" requesting targeting -- pos size "+ posSession.pos.size());
                 ActorRef nextActor = getContext().actorOf(Props.create(StoreSessionTargetingActor.class).withDispatcher("blocking-io-dispatcher"));
-                nextActor.tell(pos, getSelf());
+                posSession.targetingCalls++;
+                nextActor.tell(posSession, getSelf());
             }
         }).build();
     }
