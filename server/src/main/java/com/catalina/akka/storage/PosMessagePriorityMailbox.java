@@ -1,5 +1,7 @@
 package com.catalina.akka.storage;
 
+import com.catalina.akka.models.cust;
+import com.catalina.akka.models.tot;
 import com.typesafe.config.Config;
 
 import akka.actor.ActorSystem;
@@ -13,7 +15,7 @@ public class PosMessagePriorityMailbox extends UnboundedStablePriorityMailbox {
 	    super(new PriorityGenerator() {
 	      @Override
 	      public int gen(Object message) {
-	        if (message.toString().contains("_type\":3") || message.toString().contains("_type\":4"))
+	        if (message instanceof cust || message instanceof tot)
 	          return 0; // 'highpriority messages should be treated first if possible
 	        else 
 	        	return 2;

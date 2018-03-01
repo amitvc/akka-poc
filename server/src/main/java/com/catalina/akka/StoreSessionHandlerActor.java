@@ -1,5 +1,8 @@
 package com.catalina.akka;
 
+import com.catalina.akka.models.msg;
+import com.google.gson.Gson;
+
 import akka.actor.AbstractActor;
 import akka.dispatch.UnboundedMessageQueueSemantics;
 
@@ -8,11 +11,9 @@ public class StoreSessionHandlerActor extends AbstractActor implements Unbounded
 
 	@Override
 	public Receive createReceive() {
-		return receiveBuilder().matchEquals("Targeting", p -> {
-			System.out.println("Actor "+ this +" will make a targeting call");
-			
-		}).matchEquals("Wait", p -> {
-			System.out.println("Actor "+ this + " will wait for next message");
+		return receiveBuilder().match(msg.class, p -> {
+		    Gson gson = new Gson();
+		    System.out.println("Actor--"+ this.getSelf().toString() + gson.toJson(p));
 		}).build();
 	}
 }

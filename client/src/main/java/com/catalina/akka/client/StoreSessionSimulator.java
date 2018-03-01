@@ -55,7 +55,7 @@ public class StoreSessionSimulator implements Runnable {
                     out.newLine();
                     out.flush();
                 }
-            	Thread.sleep(4000);
+            	Thread.sleep(6000);
             }
             
         } catch (IOException e) {

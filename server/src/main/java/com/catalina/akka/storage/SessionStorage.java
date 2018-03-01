@@ -38,11 +38,7 @@ public class SessionStorage {
     		}
     	    
     	}
-    	if(m instanceof cust || m instanceof tot ) {
-    		actor.tell("Targeting", null);
-    	} else {
-    		actor.tell("Wait", null);
-    	}
+    	actor.tell(m, null);
     }
     
     public static String createKey(msg m) {
