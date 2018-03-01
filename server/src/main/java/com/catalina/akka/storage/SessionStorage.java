@@ -21,7 +21,7 @@ public class SessionStorage {
     public void handleMessage(msg m) {
     	ActorRef actor = sessions.get(createKey(m));
     	if(actor == null) {
-    		actor = actorSystem.actorOf(Props.create(StoreSessionHandlerActor.class), "actor-"+createKey(m));
+    		actor = actorSystem.actorOf(Props.create(StoreSessionHandlerActor.class).withDispatcher(""), "actor-"+createKey(m));
     		sessions.put(createKey(m), actor);
     	}
     	if(m instanceof cust || m instanceof tot ) {
