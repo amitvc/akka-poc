@@ -31,15 +31,17 @@ public class StoreSessionSimulator implements Runnable {
         try {
             BufferedWriter out = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
             Gson gson = new Gson();
-            while (true) {
+            int i=0;
+            while (i < 50000) {
+                i++;
                 List<msg> messages = getNewMessages();
                 for (msg m : messages) {
-                    Thread.sleep(25);
+                    Thread.sleep(20);
                     out.write(gson.toJson(m));
                     out.newLine();
                     out.flush();
                 }
-                Thread.sleep(6000);
+                Thread.sleep(100);
             }
 
         } catch (IOException e) {
@@ -51,7 +53,7 @@ public class StoreSessionSimulator implements Runnable {
         }
     }
 
-    private List<msg> getNewMessages() {
+    public static List<msg> getNewMessages() {
         hdr _hdr = new hdr(199, 321, UUID.randomUUID().toString(), 1, System.currentTimeMillis());
         List<msg> messages = new ArrayList<msg>();
         sord s = new sord(_hdr);
@@ -62,8 +64,15 @@ public class StoreSessionSimulator implements Runnable {
         messages.add(upc2);
         upc upc3 = new upc(_hdr, "333333333", 5, 800);
         messages.add(upc3);
+        upc upc4 = new upc(_hdr, "444444444", 2, 800);
+        messages.add(upc4);
+        upc upc5 = new upc(_hdr, "555555555", 3, 800);
+        messages.add(upc5);
         cust cid = new cust(_hdr);
         cid.cid = "999999";
+        messages.add(cid);
+        cid = new cust(_hdr);
+        cid.cid = "9000000000";
         messages.add(cid);
         tot t = new tot(_hdr);
         messages.add(t);

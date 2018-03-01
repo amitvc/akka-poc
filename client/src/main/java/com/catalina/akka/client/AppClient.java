@@ -14,8 +14,9 @@ public class AppClient {
     public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException {
         List<Thread> threadList = new ArrayList<Thread>();
         Socket client = new Socket("localhost", 9001);
-        for(int i=0; i < 1000; i++) {            
-            Thread.sleep(100);
+        
+        for(int i=0; i < 500; i++) {
+            Thread.sleep(10);
             StoreSessionSimulator storeSessionSimulator = new StoreSessionSimulator(client);
             Thread t = new Thread(storeSessionSimulator);
             threadList.add(t);
