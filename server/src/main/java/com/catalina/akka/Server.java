@@ -8,9 +8,15 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.catalina.akka.models.cust;
+import com.catalina.akka.models.eord;
 import com.catalina.akka.models.msg;
+import com.catalina.akka.models.sord;
+import com.catalina.akka.models.tot;
+import com.catalina.akka.models.upc;
 import com.catalina.akka.storage.SessionStorage;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class Server {
     
@@ -50,7 +56,18 @@ public class Server {
             while(true) {
                 try {
                     String msg_str = reader.readLine();
-                    msg m = gson.fromJson(msg_str, msg.class);
+                    msg m = null;
+                    if(msg_str.contains("_type\":1")) {
+                    	m= gson.fromJson(msg_str, sord.class);
+                    } else if(msg_str.contains("_type\":2")) {
+                    	m= gson.fromJson(msg_str, upc.class);
+                    } else if(msg_str.contains("_type\":3")) {
+                    	m= gson.fromJson(msg_str, cust.class);
+                    } else if(msg_str.contains("_type\":4")) {
+                    	m= gson.fromJson(msg_str, tot.class);
+                    } else if(msg_str.contains("_type\":5")) {
+                    	m= gson.fromJson(msg_str, eord.class);
+                    }
                     sessionStorage.handleMessage(m);
                 } catch (IOException e) {
                     e.printStackTrace();

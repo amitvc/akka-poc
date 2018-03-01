@@ -1,8 +1,11 @@
 package com.catalina.akka.models;
 
 public class tot extends msg {
-    public tot(hdr h) {
+    private int _type;
+
+	public tot(hdr h) {
         super(h);
+        this._type = 4;
     }
 
     public int total;
