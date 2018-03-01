@@ -1,19 +1,21 @@
 package com.catalina.akka;
 
-import com.catalina.akka.models.msg;
-import com.google.gson.Gson;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import akka.actor.AbstractActor;
-import akka.dispatch.UnboundedMessageQueueSemantics;
 
 
-public class StoreSessionHandlerActor extends AbstractActor implements UnboundedMessageQueueSemantics {
+public class StoreSessionHandlerActor extends AbstractActor  {
 
+    @Override
+    public void preStart() throws Exception {
+        System.out.println("Starting actor " + getSelf().toString());
+    }
+    
 	@Override
 	public Receive createReceive() {
-		return receiveBuilder().match(msg.class, p -> {
-		    Gson gson = new Gson();
-		    System.out.println("Actor--"+ this.getSelf().toString() + gson.toJson(p));
+		return receiveBuilder().match(ConcurrentLinkedQueue.class, p -> {		    
+		    System.out.println("Actor--"+ getSelf().toString() + p + " executing targeting");
 		}).build();
 	}
 }

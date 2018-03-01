@@ -3,10 +3,8 @@ package com.catalina.akka.storage;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.catalina.akka.StoreSessionHandlerActor;
-import com.catalina.akka.models.cust;
 import com.catalina.akka.models.msg;
-import com.catalina.akka.models.tot;
+import com.catalina.akka.sessions.StoreSessionActor;
 import com.typesafe.config.ConfigFactory;
 
 import akka.actor.ActorRef;
@@ -19,6 +17,7 @@ public class SessionStorage {
     
     private static ActorSystem actorSystem = ActorSystem.create("store-session-actor-system", ConfigFactory.load().getConfig("akka.configuration"));
     
+    
     public SessionStorage() {
         if(actorSystem != null) {
             System.out.println(actorSystem.settings());
@@ -30,13 +29,12 @@ public class SessionStorage {
     	ActorRef actor = sessions.get(createKey(m));
     	if(actor == null) {
     		try {
-    		    actor = actorSystem.actorOf(Props.create(StoreSessionHandlerActor.class).withDispatcher("blocking-io-dispatcher"), "store-session-"+createKey(m));
-                sessions.put(createKey(m), actor);    
+    		    actor = actorSystem.actorOf(Props.create(StoreSessionActor.class).withDispatcher("blocking-io-dispatcher"), "store-session-"+createKey(m));
+                sessions.put(createKey(m), actor);
     		}catch(Exception ex) {
     		    System.out.println(ex);
     		    ex.printStackTrace();
     		}
-    	    
     	}
     	actor.tell(m, null);
     }

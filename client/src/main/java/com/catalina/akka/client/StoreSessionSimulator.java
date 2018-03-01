@@ -21,21 +21,46 @@ import com.google.gson.Gson;
 public class StoreSessionSimulator implements Runnable {
 
     private Socket client;
+
     public StoreSessionSimulator(Socket client) {
         this.client = client;
     }
-    
+
     public void run() {
-        hdr _hdr = new hdr(199,321,UUID.randomUUID().toString(), 1, System.currentTimeMillis());
-        
+
+        try {
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(client.getOutputStream()));
+            Gson gson = new Gson();
+            while (true) {
+                List<msg> messages = getNewMessages();
+                for (msg m : messages) {
+                    Thread.sleep(25);
+                    out.write(gson.toJson(m));
+                    out.newLine();
+                    out.flush();
+                }
+                Thread.sleep(6000);
+            }
+
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    private List<msg> getNewMessages() {
+        hdr _hdr = new hdr(199, 321, UUID.randomUUID().toString(), 1, System.currentTimeMillis());
         List<msg> messages = new ArrayList<msg>();
         sord s = new sord(_hdr);
         messages.add(s);
-        upc upc1 = new upc(_hdr, "111111111", 2,300);
+        upc upc1 = new upc(_hdr, "111111111", 2, 300);
         messages.add(upc1);
-        upc upc2 = new upc(_hdr, "222222222", 4,300);
+        upc upc2 = new upc(_hdr, "222222222", 4, 300);
         messages.add(upc2);
-        upc upc3 = new upc(_hdr, "333333333", 5,800);
+        upc upc3 = new upc(_hdr, "333333333", 5, 800);
         messages.add(upc3);
         cust cid = new cust(_hdr);
         cid.cid = "999999";
@@ -44,29 +69,6 @@ public class StoreSessionSimulator implements Runnable {
         messages.add(t);
         eord _eord = new eord(_hdr);
         messages.add(_eord);
-        
-        try {
-            BufferedWriter out = new BufferedWriter( new OutputStreamWriter(client.getOutputStream()));
-            Gson gson = new Gson();
-            while(true) {
-            	for(msg m : messages) {
-                    Thread.sleep(25);
-                    out.write(gson.toJson(m));
-                    out.newLine();
-                    out.flush();
-                }
-            	Thread.sleep(6000);
-            }
-            
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        
-        
+        return messages;
     }
-
 }

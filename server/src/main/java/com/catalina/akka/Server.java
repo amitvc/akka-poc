@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Comparator;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -16,17 +18,17 @@ import com.catalina.akka.models.tot;
 import com.catalina.akka.models.upc;
 import com.catalina.akka.storage.SessionStorage;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 public class Server {
     
     private ServerSocket server_socket;
-    private SessionStorage sessionStorage;
+    
     
     public Server() {
     }
     
     public void init() throws IOException {
+        
         server_socket = new ServerSocket(9001, 10);
         ExecutorService svc =  Executors.newCachedThreadPool();
         System.out.println("Creating socket on port 9000");
