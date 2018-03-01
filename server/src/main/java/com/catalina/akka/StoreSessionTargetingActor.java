@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import akka.actor.AbstractActor;
 
 
-public class StoreSessionHandlerActor extends AbstractActor  {
+public class StoreSessionTargetingActor extends AbstractActor  {
 
     @Override
     public void preStart() throws Exception {

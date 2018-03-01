@@ -2,7 +2,7 @@ package com.catalina.akka.sessions;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import com.catalina.akka.StoreSessionHandlerActor;
+import com.catalina.akka.StoreSessionTargetingActor;
 import com.catalina.akka.models.cust;
 import com.catalina.akka.models.msg;
 import com.catalina.akka.models.tot;
@@ -23,7 +23,7 @@ public class StoreSessionActor extends AbstractActor{
             pos.offer(m);
             if(m instanceof cust || m instanceof tot) {
                 System.out.println("Actor "+ getSelf().toString()+" requesting targeting -- pos size "+ pos.size());
-                ActorRef nextActor = getContext().actorOf(Props.create(StoreSessionHandlerActor.class).withDispatcher("blocking-io-dispatcher"));
+                ActorRef nextActor = getContext().actorOf(Props.create(StoreSessionTargetingActor.class).withDispatcher("blocking-io-dispatcher"));
                 nextActor.tell(pos, getSelf());
             }
         }).build();
