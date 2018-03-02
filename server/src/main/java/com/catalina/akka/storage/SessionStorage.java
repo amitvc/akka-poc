@@ -34,10 +34,6 @@ public class SessionStorage {
     
     
     public SessionStorage() {
-        if(actorSystem != null) {
-            System.out.println(actorSystem.settings());
-        }
-        
     }
     
     public void handleMessage(msg m) {

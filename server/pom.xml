@@ -8,14 +8,19 @@
 		<artifactId>poc</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<groupId>com.catalina.akka</groupId>
 	<artifactId>server</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<name>server</name>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+	<repositories>
+		<repository>
+			<id>lightbend-commercial</id>
+			<name>Lightbend Commercial</name>
+			<url>https://lightbend.bintray.com/commercial-releases</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/com.typesafe.akka/akka-actor -->
 		<dependency>
@@ -23,6 +28,21 @@
 			<artifactId>akka-actor_2.12</artifactId>
 			<version>2.5.10</version>
 		</dependency>
+		<!-- <dependency>
+			<groupId>com.lightbend.cinnamon</groupId>
+			<artifactId>cinnamon-chmetrics_2.11</artifactId>
+			<version>2.5.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.lightbend.cinnamon</groupId>
+			<artifactId>cinnamon-akka_2.11</artifactId>
+			<version>2.5.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.lightbend.cinnamon</groupId>
+			<artifactId>cinnamon-chmetrics-http-reporter_2.11</artifactId>
+			<version>2.5.3</version>
+		</dependency> -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -58,6 +78,45 @@
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.10</version>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>com.lightbend.cinnamon</groupId>
+									<artifactId>cinnamon-agent</artifactId>
+									<version>2.5.3</version>
+									<overWrite>true</overWrite>
+									<destFileName>cinnamon-agent.jar</destFileName>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.5.0</version>
+				<configuration>
+					<executable>java</executable>
+					<arguments>
+						<argument>-javaagent:${project.build.directory}/dependency/cinnamon-agent.jar</argument>
+						<argument>-classpath</argument>
+						<classpath />
+						<argument>com.catalina.akka.AppServer</argument>
+					</arguments>
 				</configuration>
 			</plugin>
 		</plugins>
