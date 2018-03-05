@@ -18,11 +18,16 @@ import com.catalina.akka.models.tot;
 import com.catalina.akka.models.upc;
 import com.catalina.akka.storage.SessionStorage;
 import com.google.gson.Gson;
+import com.typesafe.config.ConfigFactory;
+
+import akka.actor.ActorRef;
+import akka.actor.ActorSystem;
 
 public class Server {
     
     private ServerSocket server_socket;
     
+    private static ActorSystem actorSystem = ActorSystem.create("store-session-actor-system", ConfigFactory.load().getConfig("akka.configuration"));
     
     public Server() {
     }
@@ -36,17 +41,18 @@ public class Server {
             System.out.println("Waiting to accept incoming connections");
             Socket client_connection = server_socket.accept();
             System.out.println("got connection from "+ client_connection.getInetAddress().getHostAddress());
-            svc.submit(new Thread(new ClientHandler(client_connection, new SessionStorage())));
+            svc.submit(new Thread(new ClientHandler(client_connection)));
         }
     }
     
     public static class ClientHandler implements Runnable {
         private BufferedReader reader;
         private SessionStorage sessionStorage;
-        public ClientHandler(Socket client_connection, SessionStorage s) {
+        private ActorRef mainActor;
+        public ClientHandler(Socket client_connection) {
             try {                
                 reader = new BufferedReader(new InputStreamReader(client_connection.getInputStream()));
-                this.sessionStorage = s;
+                mainActor = actorSystem.actorOf(SessionStorage.props(), "Main-Actor");
             } catch (IOException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -70,7 +76,8 @@ public class Server {
                     } else if(msg_str.contains("_type\":5")) {
                     	m= gson.fromJson(msg_str, eord.class);
                     }
-                    sessionStorage.handleMessage(m);
+                    
+                    mainActor.tell(m, ActorRef.noSender());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
